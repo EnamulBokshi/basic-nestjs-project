@@ -1,12 +1,15 @@
-import { Controller, Get, Param, Query, Body, Post } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Put } from '@nestjs/common';
+import { CreateProfile } from './dto/create-profile.dto';
+import { ProfileService } from './profile.service';
 
 @Controller('profiles')
 export class ProfileController {
+
+    constructor(private readonly profileService: ProfileService){}
     // GET /profiles
     @Get()
-    getProfiles(@Query('query') query:string){
-        console.log(query);
-        return [{query}, {name: 'John Doe', age: 30}, {name: 'Jane Smith', age: 25}];
+    getProfiles(){
+        return this.profileService.findAll();
     }
 
     // GET /profiles/:id
@@ -18,12 +21,23 @@ export class ProfileController {
 
     //POST /profiles
     @Post() 
-    createProfile(@Body() profileData: any){
+    createProfile(@Body() profileData: CreateProfile){
         console.log(profileData);
-        return {message: 'Profile created successfully', profileData};
+        return {message: 'Profile created successfully', 
+            data: {
+                id: profileData.id,
+                name: profileData.name,
+                age: profileData.age
+            }
+        };
     }
 
 
     //PUT /profiles/:id
+    @Put(":id")
+    updateProfile(@Param('id') id: string, @Body() profileData: CreateProfile){
+        console.log(id, profileData);
+        return {message: 'Profile updated successfully', id, profileData};
+    }
 
 }

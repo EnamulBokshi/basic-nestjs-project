@@ -7,7 +7,7 @@ import { ProfileController } from './profile/profile.controller';
 
 @Module({
   imports: [ProfileModule],
-  controllers: [AppController, CatsController, ProfileController],
+  controllers: [AppController, CatsController],
   providers: [AppService],
 })
 export class AppModule {}
