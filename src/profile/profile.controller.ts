@@ -1,11 +1,11 @@
-import { Controller, Get, Param, Query, Body, Post, Put } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Put, HttpStatus } from '@nestjs/common';
 import { CreateProfile } from './dto/create-profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('profiles')
 export class ProfileController {
 
-    constructor(private readonly profileService: ProfileService){}
+    constructor(private  profileService: ProfileService){}
     // GET /profiles
     @Get()
     getProfiles(){
@@ -23,7 +23,13 @@ export class ProfileController {
     @Post() 
     createProfile(@Body() profileData: CreateProfile){
         console.log(profileData);
-        return {message: 'Profile created successfully', 
+        const newProfile = this.profileService.create(profileData);
+        if(!newProfile){
+            return {message: 'Failed to create profile'};
+        }
+        return {
+            status: HttpStatus.CREATED,
+            message: 'Profile created successfully', 
             data: {
                 id: profileData.id,
                 name: profileData.name,
