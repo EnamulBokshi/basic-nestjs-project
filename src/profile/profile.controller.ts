@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Body, Post, Put, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Put, HttpStatus, Delete } from '@nestjs/common';
 import { CreateProfile } from './dto/create-profile.dto';
 import { ProfileService } from './profile.service';
 
@@ -46,4 +46,8 @@ export class ProfileController {
         return {message: 'Profile updated successfully', id, profileData};
     }
 
+    @Delete(":id")
+    deleteProfile(@Param('id') id: string){
+        return this.profileService.delete(id) ? {message: 'Profile deleted successfully'} : {message: 'Failed to delete profile'};
+    }
 }
