@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Query, Body, Post, Put, HttpStatus, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Post, Put, HttpStatus, Delete, ValidationPipe, UseGuards } from '@nestjs/common';
 import { CreateProfile } from './dto/create-profile.dto';
 import { ProfileService } from './profile.service';
+import { ProfileGuard } from './profile.guard';
 
 @Controller('profiles')
 export class ProfileController {
@@ -21,9 +22,11 @@ export class ProfileController {
 
     //POST /profiles
     @Post() 
-    createProfile(@Body() profileData: CreateProfile){
-        console.log(profileData);
+
+    createProfile(@Body(new ValidationPipe()) profileData: CreateProfile){
+        
         const newProfile = this.profileService.create(profileData);
+
         if(!newProfile){
             return {message: 'Failed to create profile'};
         }
@@ -41,12 +44,14 @@ export class ProfileController {
 
     //PUT /profiles/:id
     @Put(":id")
+    @UseGuards(ProfileGuard)
     updateProfile(@Param('id') id: string, @Body() profileData: CreateProfile){
         console.log(id, profileData);
         return {message: 'Profile updated successfully', id, profileData};
     }
-
+    
     @Delete(":id")
+    @UseGuards(ProfileGuard)
     deleteProfile(@Param('id') id: string){
         return this.profileService.delete(id) ? {message: 'Profile deleted successfully'} : {message: 'Failed to delete profile'};
     }
